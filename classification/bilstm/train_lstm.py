@@ -12,10 +12,22 @@
 
 import logging
 import os
+import tensorflow as tf
+
 
 from utils import DataProcessor_LSTM
 from utils import load_vocabulary
 from bilstm.model_bilstm import MyModel
+
+tf.debugging.set_log_device_placement(True)
+gpus = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_visible_devices(gpus[2], 'GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
+print(len(gpus))
+logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+print(len(logical_gpus))
+
 
 #set logging
 log_file_path = "ckpt/run_bilstm.log"
@@ -35,6 +47,7 @@ logger.addHandler(fhlr)
 
 logger.info("loading vocab...")
 path = "/Users/songdongdong/workSpace/datas/learning_data/中文文本分类/"
+# path="/home/jovyan/data/中文文本分类/"
 vocab_label = "vocab_char_label.txt"
 vocab_char = "vocab_char.txt"
 vocab_path_char = path + vocab_char
@@ -44,7 +57,7 @@ w2i_label, i2w_label = load_vocabulary(vocab_path_char_label)
 
 logger.info("loading data...")
 
-path = "/Users/songdongdong/workSpace/datas/learning_data/中文文本分类/"
+#path = "/Users/songdongdong/workSpace/datas/learning_data/中文文本分类/"
 train_file = "cnews.train.txt"
 test_file = "cnews.test.txt"
 val_file = "cnews.val.txt"
