@@ -96,7 +96,7 @@ logger.info("start training...")
  outputs_seq_batch)= data_processor_train.get_batch(1000)
 (inputs_seq_batch_valid,
  inputs_seq_len_batch_valid,
- outputs_seq_batch_valid)= data_processor_train.get_batch(1000)
+ outputs_seq_batch_valid)= data_processor_valid.get_batch(1000)
 
 print(inputs_seq_batch.shape,outputs_seq_batch.shape) #(1000, 12456) (1000, 12)
 model.train(inputs_seq_batch,outputs_seq_batch,

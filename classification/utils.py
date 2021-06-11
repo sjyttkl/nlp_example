@@ -14,7 +14,7 @@ import random
 import numpy as np
 import re
 
-path = "/Users/songdongdong/workSpace/datas/learning_data/中文文本分类/"
+#path = "/Users/songdongdong/workSpace/datas/learning_data/中文文本分类/"
 
 
 def load_data(path, vocab_char, vocab_label):

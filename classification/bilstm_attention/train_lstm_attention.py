@@ -18,7 +18,7 @@ import tensorflow as tf
 from utils import DataProcessor_LSTM
 from utils import load_vocabulary
 # from model_bilstm import MyModel
-from bilstm_attention.model_bilstm_attention import MyModel
+from model_bilstm_attention import MyModel
 
 
 tf.debugging.set_log_device_placement(True)
