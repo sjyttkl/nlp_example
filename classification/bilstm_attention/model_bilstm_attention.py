@@ -41,7 +41,10 @@ class MyModel:
         attention_layer = AttentionBaseLayer(self.hidden_dim)
         #attention
         input_attention = attention_layer(input_bilstm)
-        prediction_layer = tf.keras.layers.Dense(self.vocab_size_label,activation=tf.sigmoid,name="predictions")
+        prediction_layer = tf.keras.layers.Dense(self.vocab_size_label,activation=tf.nn.softmax,name="predictions")
+        #sigmoid激活函数应用于多标签分类（一个样本可能属于两个 label)  将sigmoid激活函数应用于多标签分类时，其损失函数应设置为binary_crossentropy（交叉熵）； 一般不用来做多类分类，而是用来做二分类的
+        #softmax激活函数应用于多分类(每个样本一个label）
+        # 我们平时在给新闻贴标签的时候，就有可能把一篇文章分为经济和文化两个类别。因此，多标签问题在我们的日常生活中也是很常见的
 
         prediction = prediction_layer(input_attention)
 
@@ -58,7 +61,7 @@ class MyModel:
         if not os.path.exists(logdir):
             os.mkdir(logdir)
         output_model_file = os.path.join(logdir,
-                                         "fashion_mnist_weights.h5")
+                                         "bilstm_attention.h5")
         self.callbacks = [
             tf.keras.callbacks.TensorBoard(logdir),
             tf.keras.callbacks.ModelCheckpoint(output_model_file,

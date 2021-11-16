@@ -14,7 +14,7 @@ import random
 import numpy as np
 import re
 
-#path = "/Users/songdongdong/workSpace/datas/learning_data/中文文本分类/"
+path = "/Users/songdongdong/workSpace/datas/learning_data/中文文本分类/"
 
 
 def load_data(path, vocab_char, vocab_label):
@@ -179,6 +179,7 @@ class DataProcessor_LSTM(object):
 
 
 if __name__ == "__main__":
+    path = "/Users/songdongdong/workSpace/datas/learning_data/中文文本分类/"
     vocab_label = "vocab_char_label.txt"
     vocab_char = "vocab_char.txt"
     # load_data(path,vocab_char,vocab_label=vocab_label)
@@ -189,7 +190,6 @@ if __name__ == "__main__":
 
     print(w2i_label)
     print(i2w_label)
-    path = "/Users/songdongdong/workSpace/datas/learning_data/中文文本分类/"
     train_file = "cnews.train.txt"
     test_file = "cnews.test.txt"
     val_file = "cnews.val.txt"

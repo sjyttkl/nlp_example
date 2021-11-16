@@ -23,7 +23,7 @@ from model_bilstm_attention import MyModel
 
 tf.debugging.set_log_device_placement(True)
 gpus = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_visible_devices(gpus[2], 'GPU')
+# tf.config.experimental.set_visible_devices(gpus[2], 'GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 print(len(gpus))
@@ -104,3 +104,5 @@ print(inputs_seq_batch.shape,outputs_seq_batch.shape) #(1000, 12456) (1000, 12)
 model.train(inputs_seq_batch,outputs_seq_batch,
             inputs_seq_batch_valid,
             outputs_seq_batch_valid,32,20)
+#模型保存称pb
+model.save("./keras_saved_graph")

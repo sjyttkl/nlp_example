@@ -5,12 +5,14 @@
    File Name：     crf_layer.py
    email:         songdongdong@weidian.com
    Author :       songdongdong
-   date：          2021/6/10 23:59
-   Description :  CRF.
+   date：          2021/8/1 00:27
+   Description :
     https://blog.csdn.net/qq_41837900/article/details/100201109
    https://blog.csdn.net/qq_41837900/article/details/100201109
 ==================================================
- tensorflow中的 有关crf 的函数：
+"""
+
+# tensorflow中的 有关crf 的函数：
 #
 # tf.contrib.crf.crf_sequence_score #计算标签序列的非规范化分数
 # tf.contrib.crf.crf_log_norm #计算CRF的标准化.
@@ -27,45 +29,49 @@
 #  tf.contrib.crf.viterbi_decode
 #  它们分别用于计算标注序列的对数似然，以及根据给定参数解码标注序列。
 # tfa.text.crf_decode()
-"""
 import tensorflow as tf
 import tensorflow_addons as tfa
 
-class CRF(tf.keras.layers.Layer):
-    def __init__(self, logits_seq, tag_indices, inputs_seq_len, **kwargs):
-        super().__init__(**kwargs)
-        self.output_seq = tag_indices
-        self.output_seq_len = inputs_seq_len
-        super(AttentionBaseLayer, self).__init__(**kwargs)
 
+
+class CRF(tf.keras.layers.Layer):
+
+    def __init__(self, label_size, **kwargs):
+        super(CRF, self).__init__(**kwargs)
+        self.tags_num = label_size  # 表示 tags总数
+        self.trans_params = tf.Variable(
+            tf.random.uniform(shape=(label_size, label_size)), name="transition")
+
+    # 这个需要覆盖下，不然tf，不能完整的保存模型，在加载模型的时候会出错
     def get_config(self):
         config = super().get_config().copy()
         config.update({
-            'attention_size': self.attention_size
+            'tags_num': self.tags_num
         })
         return config
 
-    def build(self, input_shape):
-        assert len(input_shape[0]) == len(self.output_seq_len[0])
-        assert len(input_shape[0]) == len(self.input_shape[0])
+    # build() 用来初始化定义weights, 这里可以用父类的self.add_weight() 函数来初始化数据, 该函数必须将 self.built 设置为True, 以保证该 Layer 已经成功 build , 通常如上所示, 使用 super(MyLayer, self).build(input_shape) 来完成
+    def build(self, input_shape, ):  # 在build()中增删参数
+        # inputs = np.array([[[-3, 5, -1], [1, 1, 3], [-1, -2, 4], [0, 0, 0]]], dtype=np.float32)
+        # assert len(input_shape[0]) == len(self.output_seq_len[0])
+        # assert len(input_shape[0]) == len(self.input_shape[0])
 
-        super(CRF, self).build(input_shape)## 一定要在最后调用它
+        super(CRF, self).build(input_shape)  ## 一定要在最后调用它
+        # self.built = True
 
-    def call(self,inputs,train=True,**kwargs):
-
-        transition_matrix  = None
-        if(train):
-            # log_likehihood A [batch_size] Tensor ,最大似然估计
-            # transition_matrix A [num_tags, num_tags] transition matrix.
-            log_likelihood, transition_matrix = tfa.text.crf.crf_log_likelihood(inputs=inputs,
-                                                                                tag_indices=self.output_seq,
-                                                                                sequence_lengths=self.output_seq_len)
-            return log_likelihood
-        else:
-            # preds_seq ,预测出的序列
-            # crf_scores ，crf分数
-            preds_seq, crf_scores = tfa.text.crf.crf_decode(inputs, transition_matrix, self.inputs_seq_len)
-            return preds_seq
+    @tf.function  # 会把普通python计算变成 graph
+    def call(self, inputs, labels, seq_lens):
+        log_likelihood, self.trans_params = tfa.text.crf_log_likelihood(
+            inputs, labels, seq_lens,
+            transition_params=self.trans_params)
+        loss = tf.reduce_sum(-log_likelihood)
+        return loss
 
     def compute_output_shape(self, input_shape):
-        return input_shape[0]
+        output_shape = input_shape[:2]
+        return output_shape + self.tags_num
+
+    @property
+    def _compute_dtype(self):
+        # fixed output dtype from underline CRF functions
+        return tf.int32
