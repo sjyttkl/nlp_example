@@ -13,6 +13,18 @@
 from collections import Counter
 from jieba import lcut
 from random import choice
+#
+# corpus = '''
+# 这一生原本一个人，你坚持厮守成我们，却小小声牵着手在默认。
+# 感动的眼神说愿意，走进我的人生。
+# 进了门开了灯一家人，盼来生依然是一家人。
+# 确认过眼神，我遇上对的人。
+# 我挥剑转身，而鲜血如红唇。
+# 前朝记忆渡红尘，伤人的不是刀刃，是你转世而来的魂。
+# 青石板上的月光照进这山城，我一路的跟你轮回声，我对你用情极深。
+# 谁在用琵琶弹奏一曲东风破，枫叶将故事染色，结局我看透。
+# 篱笆外的古道我牵着你走过，荒烟漫草的年头，就连分手都很沉默。
+# '''
 
 corpus = '''
 这一生原本一个人，你坚持厮守成我们，却小小声牵着手在默认。
@@ -74,4 +86,4 @@ if __name__ =="__main__":
     bigram = get_model(corpus)
     first_words = ['你', '我们', '确认']
     for word in first_words:
-        generate_text(bigram, word, free=4)
+        generate_text(bigram, word, free=1)

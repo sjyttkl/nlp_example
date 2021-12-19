@@ -24,8 +24,7 @@ from utils import get_logger, make_path, clean, create_model, save_model
 from utils import print_config, save_config, load_config, test_ner
 from data_utils import load_word2vec, create_input, input_from_line, BatchManager
 
-from model import MyModel
-from model2 import BiLstmCrfModel
+from model import BiLstmCrfModel
 import numpy as np
 tf.debugging.set_log_device_placement(True)
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -72,6 +71,8 @@ map_file = "maps.pkl"
 pre_emb = True
 lower = True
 batch_size = 64
+max_len=100
+
 # laod data
 train_sentences = load_sentences(train_file, True,
                                  False)  # example.train [['海', 'O'], ['钓', 'O'], ['比', 'O'], ['赛', 'O'], ['地', 'O'], ['点', 'O'], ['在', 'O']]
@@ -104,6 +105,9 @@ if not os.path.isfile(map_file):
 else:
     with open(map_file, "rb") as f:
         char_to_id, id_to_char, tag_to_id, id_to_tag = pickle.load(f)
+#加载预训练模型
+embedding_matrix = load_word2vec(emb_path=emb_file,id_to_word=id_to_char,word_dim=100,old_weights={})
+
 
 # prepare data, get a collection of list containing index
 train_data = prepare_dataset(
@@ -118,7 +122,7 @@ test_data = prepare_dataset(
 print("%i / %i / %i sentences in train / dev / test." % (
     len(train_data), len(dev_data), len(test_data)))
 
-max_len=100
+
 train_manager = BatchManager(train_data, batch_size,max_len)
 dev_manager = BatchManager(dev_data, batch_size,max_len)
 test_manager = BatchManager(test_data, batch_size,max_len)
@@ -157,5 +161,5 @@ model.train(train_x,
             dev_x_len,
             valid_labels,
             batch_size,
-            10)
+            100)
 

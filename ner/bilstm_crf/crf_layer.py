@@ -59,7 +59,7 @@ class CRF(tf.keras.layers.Layer):
         super(CRF, self).build(input_shape)  ## 一定要在最后调用它
         # self.built = True
 
-    @tf.function  # 会把普通python计算变成 graph
+    @tf.function  # 动态图，转成静态图
     def call(self, inputs, labels, seq_lens):
         log_likelihood, self.trans_params = tfa.text.crf_log_likelihood(
             inputs, labels, seq_lens,

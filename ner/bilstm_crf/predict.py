@@ -13,7 +13,7 @@ from loader import char_mapping, tag_mapping
 
 
 import tensorflow as tf
-from model2 import BiLstmCrfModel
+from model import BiLstmCrfModel
 import tensorflow_addons as tfa
 import numpy as np
 import pickle
@@ -100,6 +100,7 @@ def get_valid_nertag(input_data, result_tags):
 
 
 if __name__ == "__main__":
+    saveModel()
     model, trans_params = load_model("./keras_saved_graph")
     maxlen = 100
     sentence = "去年十二月二十四日，市委书记张敬涛召集县市主要负责同志研究信访工作时，提出:"

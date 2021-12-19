@@ -16,8 +16,8 @@ class TextGenerate:
     def __init__(self, window, corpus):
         self.window = window
         self.corpus = corpus
-        self.char2id = None
-        self.id2char = None
+        self.char2id = None #文本对应的id
+        self.id2char = None # ID对应的文本
         self.char_length = 0
 
     def load_data(self):
@@ -74,9 +74,9 @@ class TextGenerate:
         return tf.keras.models.load_model(model_path)
 
 
-if __name__ =="__main__":
+if __name__ =="__main__": # 手 -> 机 -> 壳 -> 。
     corpus = '''
-    手机壳。
+    手机壳。 
     手机壳。
     手机壳。
     手机壳。
